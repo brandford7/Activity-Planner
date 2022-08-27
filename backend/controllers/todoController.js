@@ -17,8 +17,9 @@ const getTodos = asyncHandler(async (req, res) => {
 const createTodo = asyncHandler(async (req, res) => {
   const todo = await Todo.create({ text: req.body.text, user: req.user.id });
   if (!req.text) {
-    res.status(201).json(todo)
-  throw new Error('Please add a todo')};
+    res.status(201).json(todo);
+    throw new Error("Please add a todo");
+  }
 });
 
 //@desc Update a todo
@@ -31,14 +32,14 @@ const updateTodo = asyncHandler(async (req, res) => {
     throw new Error("todo not found");
   }
   //check if user exists
-  const user = await User.findById(req.user.id);
-  if (!user) {
+
+  if (!req.user) {
     res.status(401);
     throw new Error("user not found");
   }
 
   //Make sure logged in user matches todo creator
-  if (todo.user.toString() !== user.id) {
+  if (todo.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("user not authorized");
   }
@@ -57,18 +58,18 @@ const updateTodo = asyncHandler(async (req, res) => {
 const deleteTodo = asyncHandler(async (req, res) => {
   const todo = await Todo.findById(req.params.id);
   if (!todo) {
-    res.status(400)
-    throw new Error("todo not found")
+    res.status(400);
+    throw new Error("todo not found");
   }
   //check if user exists
-  const user = await User.findById(req.user.id);
-  if (!user) {
+
+  if (!req.user) {
     res.status(401);
     throw new Error("user not found");
   }
 
   //Make sure logged in user matches todo creator
-  if (todo.user.toString() !== user.id) {
+  if (todo.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("user not authorized");
   }
